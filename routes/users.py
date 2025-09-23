@@ -3,11 +3,10 @@ import models
 import schema
 from database import get_db
 from sqlalchemy.orm import Session
-from passlib.context import CryptContext
+from Credentials import hash_pass
 
 router=APIRouter()
 
-crypt_pass = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
 @router.post('/users')
 def create_user(request: schema.User, db: Session = Depends(get_db)):
@@ -17,9 +16,8 @@ def create_user(request: schema.User, db: Session = Depends(get_db)):
             status_code=status.HTTP_208_ALREADY_REPORTED,
             detail="User with this email already exists"
         )
-    password_dcy=crypt_pass.hash(request.password)
 
-    new_user = models.USER(email=request.email, password=password_dcy)
+    new_user = models.USER(email=request.email, password=hash_pass(request.password))
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
