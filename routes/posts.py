@@ -3,11 +3,15 @@ import models
 import schema
 from database import get_db
 from sqlalchemy.orm import Session
+import oauth
 
-router=APIRouter()
+router=APIRouter(
+    tags=['Posts'],
+    prefix='/blogs'
+)
 
-@router.post('/blogs', status_code=status.HTTP_201_CREATED)
-def Add_Post(request: schema.Blog,db:Session=Depends(get_db)):
+@router.post('/', status_code=status.HTTP_201_CREATED)
+def Add_Post(request: schema.Blog,db:Session=Depends(get_db),get_current_user:int=Depends(oauth.get_current_user)):
     new_post=models.POST(title=request.title,description=request.description,published=request.published)
     db.add(new_post)
     db.commit()
@@ -20,8 +24,8 @@ def Add_Post(request: schema.Blog,db:Session=Depends(get_db)):
     return new_post
 
 
-@router.get('/blogs', status_code=status.HTTP_200_OK)
-def Get_Posts(db:Session=Depends(get_db)):
+@router.get('/', status_code=status.HTTP_200_OK)
+def Get_Posts(db:Session=Depends(get_db),get_current_user:int=Depends(oauth.get_current_user)):
     posts=db.query(models.POST).all()
     if not posts:
         raise HTTPException(
@@ -31,8 +35,8 @@ def Get_Posts(db:Session=Depends(get_db)):
 
     return posts
 
-@router.get('/blogs{id}',status_code=status.HTTP_200_OK)
-def Get_Post_By_ID(id:int,db:Session=Depends(get_db)):
+@router.get('/{id}',status_code=status.HTTP_200_OK)
+def Get_Post_By_ID(id:int,db:Session=Depends(get_db),get_current_user:int=Depends(oauth.get_current_user)):
     posts=db.query(models.POST).filter(models.POST.id==id).first()
     if not posts:
         raise HTTPException(
@@ -44,8 +48,8 @@ def Get_Post_By_ID(id:int,db:Session=Depends(get_db)):
 
 
 
-@router.put('/blogs{id}',status_code=status.HTTP_200_OK)
-def Update_Post_By_ID(id:int,request:schema.Blog,db:Session=Depends(get_db)):
+@router.put('/{id}',status_code=status.HTTP_200_OK)
+def Update_Post_By_ID(id:int,request:schema.Blog,db:Session=Depends(get_db),get_current_user:int=Depends(oauth.get_current_user)):
     posts=db.query(models.POST).filter(models.POST.id==id).first()
     posts.title=request.title
     posts.description=request.description
@@ -61,8 +65,8 @@ def Update_Post_By_ID(id:int,request:schema.Blog,db:Session=Depends(get_db)):
     return posts
 
 
-@router.delete('/blogs/{id}', status_code=status.HTTP_200_OK)
-def Delete_Post_By_ID(id: int, db: Session = Depends(get_db)):
+@router.delete('/{id}', status_code=status.HTTP_200_OK)
+def Delete_Post_By_ID(id: int, db: Session = Depends(get_db),get_current_user:int=Depends(oauth.get_current_user)):
     post = db.query(models.POST).filter(models.POST.id == id).first()
     
     if not post:

@@ -5,7 +5,10 @@ from database import get_db
 from sqlalchemy.orm import Session
 from Credentials import hash_pass
 
-router=APIRouter()
+router=APIRouter(
+    tags=['Users'],
+    prefix='/Users'
+)
 
 
 @router.post('/users')
