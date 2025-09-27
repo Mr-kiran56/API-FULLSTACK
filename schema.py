@@ -11,8 +11,6 @@ class User(BaseModel):
     email:EmailStr
     password:str
 
-
-
 class Show_User(BaseModel):
     email:str
     created_at: datetime
