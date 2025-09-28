@@ -11,7 +11,7 @@ router=APIRouter(
 )
 
 
-@router.post('/users')
+@router.post('/')
 def create_user(request: schema.User, db: Session = Depends(get_db)):
     existing_user = db.query(models.USER).filter(models.USER.email == request.email).first()
     if existing_user:
@@ -26,7 +26,7 @@ def create_user(request: schema.User, db: Session = Depends(get_db)):
     db.refresh(new_user)
     return new_user
 
-@router.get('/users/{id}',response_model=schema.Show_User)
+@router.get('/{id}',response_model=schema.Show_User)
 def Get_User(id:int,db:Session=Depends(get_db)):
     user=db.query(models.USER).filter(models.USER.id==id).first()
 

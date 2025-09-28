@@ -7,6 +7,14 @@ class Blog(BaseModel):
     description: str
     published: Optional[bool] = True 
 
+class Post(Blog):
+    id:int
+    owner_id:int
+
+    class Config:
+        from_attributes = True
+
+
 class User(BaseModel):
     email:EmailStr
     password:str
