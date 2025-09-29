@@ -35,7 +35,7 @@ def Get_Posts(
     limit: int = 10,
     search: Optional[str] = ""
 ):
-    search = search.strip()  # Remove newlines and extra spaces
+    search = search.strip()  
 
     posts = db.query(models.POST).filter(
         or_(

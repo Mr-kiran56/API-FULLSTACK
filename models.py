@@ -12,8 +12,8 @@ class POST(Base):
     created_at = Column(TIMESTAMP(timezone=True), server_default=text("now()"))
     owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
 
-    owner = relationship("USER")   # link post → user
-
+    owner = relationship("USER")  
+    
 class USER(Base):
     __tablename__ = "users"
 
@@ -22,4 +22,4 @@ class USER(Base):
     password = Column(String, nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), server_default=text("now()"), nullable=False)
 
-    posts = relationship("POST", back_populates="owner")  # reverse link
+    posts = relationship("POST", back_populates="owner") 
