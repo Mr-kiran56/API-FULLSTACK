@@ -4,7 +4,7 @@ import schema
 from database import get_db
 from sqlalchemy.orm import Session
 import oauth
-from sqlalchemy import or_
+from sqlalchemy import or_,func
 from typing import List,Optional
 
 router=APIRouter(
@@ -25,24 +25,19 @@ def Add_Post(request: schema.Blog,db:Session=Depends(get_db),get_current_user:in
         )
     return new_post
 
-
-
-
-@router.get('/all', status_code=status.HTTP_200_OK, response_model=List[schema.Post])
+@router.get('/all', status_code=status.HTTP_200_OK, response_model=List[schema.Vote_Posts])
 def Get_Posts(
     db: Session = Depends(get_db),
     get_current_user: int = Depends(oauth.get_current_user),
     limit: int = 10,
     search: Optional[str] = ""
 ):
-    search = search.strip()  
-
-    posts = db.query(models.POST).filter(
-        or_(
-            models.POST.title.contains(search),
-            models.POST.description.contains(search)
-        )
-    ).limit(limit).all()
+    posts = db.query(
+        models.POST,
+        func.count(models.Votes.post_id).label("votes")
+    ).join(
+        models.Votes, models.Votes.post_id == models.POST.id, isouter=True
+    ).group_by(models.POST.id).limit(limit).all()
 
     if not posts:
         raise HTTPException(
@@ -50,7 +45,8 @@ def Get_Posts(
             detail="Data not found!"
         )
 
-    return posts
+    return [{"Posts": post, "votes": votes} for post, votes in posts]
+
 
 
 @router.get('/{id}',status_code=status.HTTP_200_OK,response_model=schema.Post)

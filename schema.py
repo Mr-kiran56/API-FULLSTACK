@@ -1,34 +1,46 @@
-from pydantic import BaseModel,EmailStr
+from pydantic import BaseModel, EmailStr, conint
 from sqlalchemy import TIMESTAMP
 from datetime import datetime
 from typing import Optional
+
 class Blog(BaseModel):
     title: str
     description: str
     published: Optional[bool] = True 
 
-class Post(Blog):
-    id:int
-    owner_id:int
-
-    class Config:
-        from_attributes = True
-
-
 class User(BaseModel):
-    email:EmailStr
-    password:str
+    email: EmailStr
+    password: str
 
 class Show_User(BaseModel):
-    email:str
+    id: int
+    email: str
     created_at: datetime
+
     class Config:
-        from_attributes = True
+        orm_mode = True
+
+
+class Post(Blog):
+    id: int
+    owner: Show_User
+
+    class Config:
+        orm_mode = True
+
+class Vote_Posts(BaseModel):
+    Posts:Post
+    votes:int
+    class Config:
+        orm_mode = True
 
 class Token(BaseModel):
     access_token: str
     token_type: str
 
-
 class TokenData(BaseModel):
     id: Optional[int] = None
+
+class Vote(BaseModel):
+    post_id: int
+    dir: conint(le=1)  # Ensures only 0 or 1
