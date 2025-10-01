@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     secret_key:str
     algorithm:str
     expire_time:int
+    database_port:int
+    db_name:str
     class Config:
         env_file='.env'
 
