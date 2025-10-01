@@ -1,10 +1,11 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from urllib.parse import quote_plus
+from Config import settings
 
-password = quote_plus("KIRAN5656@")
+password = quote_plus(settings.password)
 
-SQL_DATABASE_URL = f"postgresql://postgres:{password}@localhost/FastAPI"
+SQL_DATABASE_URL = f"{settings.database}://{settings.database_name}:{password}@{settings.host}/FastAPI"
 
 engine = create_engine(SQL_DATABASE_URL, connect_args={"options": "-c timezone=utc"})
 
