@@ -1,6 +1,7 @@
 from sqlalchemy.orm import relationship
-from sqlalchemy import Column,Integer,String,Boolean,ForeignKey,TIMESTAMP,text
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, TIMESTAMP, text
 from database import Base
+
 
 class POST(Base):
     __tablename__ = "posts"
@@ -12,8 +13,10 @@ class POST(Base):
     created_at = Column(TIMESTAMP(timezone=True), server_default=text("now()"))
     owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
 
-    owner = relationship("USER")  
-    
+    owner = relationship("USER", back_populates="posts")
+    votes = relationship("Votes", back_populates="post")  
+
+
 class USER(Base):
     __tablename__ = "users"
 
@@ -22,4 +25,15 @@ class USER(Base):
     password = Column(String, nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), server_default=text("now()"), nullable=False)
 
-    posts = relationship("POST", back_populates="owner") 
+    posts = relationship("POST", back_populates="owner")
+    votes = relationship("Votes", back_populates="user")  
+
+
+class Votes(Base):
+    __tablename__ = "votes"
+
+    post_id = Column(Integer, ForeignKey("posts.id", ondelete="CASCADE"), primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+
+    post = relationship("POST", back_populates="votes")
+    user = relationship("USER", back_populates="votes")
