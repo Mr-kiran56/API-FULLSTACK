@@ -4,7 +4,7 @@ from models import Base
 from database import engine
 from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
-
+###
 # Base.metadata.create_all(bind=engine)
 
 
@@ -28,4 +28,4 @@ app.include_router(votes.router)
 
 @app.get("/")
 def root():
-    return {"message": "API is running 🚀"}
+    return {"message": "API is running now 🚀"}
