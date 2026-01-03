@@ -1,5 +1,4 @@
 from pydantic import BaseModel, EmailStr, conint
-from sqlalchemy import TIMESTAMP
 from datetime import datetime
 from typing import Optional
 
@@ -16,7 +15,6 @@ class Show_User(BaseModel):
     id: int
     email: str
     created_at: datetime
-
     class Config:
         orm_mode = True
 
