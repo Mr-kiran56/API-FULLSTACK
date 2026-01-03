@@ -20,6 +20,8 @@ def create_access_token(data: dict):
     token = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return token
 
+
+
 def verify_token(token: str, credential_exceptions):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -30,6 +32,8 @@ def verify_token(token: str, credential_exceptions):
     except JWTError:
         raise credential_exceptions
     return token_data
+
+
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     credential_exceptions = HTTPException(
